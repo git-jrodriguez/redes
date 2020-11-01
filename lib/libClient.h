@@ -69,5 +69,5 @@ void menu(int cliente, char nombre[1024]);
 void solicitarLogCliente (int cliente, const char * nombre);
 void recibirEImprimirServicio(int *socket);
 void recibirTexto(int *cliente, char *texto);
-
+void recibirAsientos(int *socket, int *array);
 #endif

@@ -127,7 +127,7 @@ void recibirEImprimirServicio(int *socket)
 
 void recibirAsientos(int *socket, int *array)
 {
-    int n = read(*socket, array, 60);
+    int n = read(*socket, array, 80);
     if (n < 0)
         error("error al recibir mensaje");
 }
@@ -567,10 +567,18 @@ void solicitarLogCliente(int cliente, const char *nombre)
     fclose(f);
 }
 
+
 void imprimirBus(int socket)
 {
     int array[3][20];
-    recibirAsientos(&socket, &array);
+    int col1[20];
+    recibirAsientos(&socket, &col1);
+
+    int col2[20];
+    recibirAsientos(&socket, &col2);
+
+    int col3[20];
+    recibirAsientos(&socket, &col3);
 
     printf("%*c", 21, ' ');
     printf("1 1 1 1 1 1 1 1 1 1 2\n");
@@ -580,7 +588,7 @@ void imprimirBus(int socket)
     printf("A| ");
     for (int i = 0; i < FILAS; i++)
     {
-        if (array[0][i] == 0)
+        if (col1[i] == 0)
         {
             printf("O ");
         }
@@ -592,7 +600,7 @@ void imprimirBus(int socket)
     printf("\nB| ");
     for (int i = 0; i < FILAS; i++)
     {
-        if (array[1][i] == 0)
+        if (col2[i] == 0)
         {
             printf("O ");
         }
@@ -605,7 +613,7 @@ void imprimirBus(int socket)
     printf("\nC| ");
     for (int i = 0; i < FILAS; i++)
     {
-        if (array[2][i] == 0)
+        if (col3[i] == 0)
         {
             printf("O ");
         }

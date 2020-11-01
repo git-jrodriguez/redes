@@ -322,7 +322,14 @@ void enviarAsientos(int cliente, int id)
     Servicio s;
     traerServicio(id, &s);
     printf("Asientos: %d", s.asientos[0][0]);
-    enviarArrayAsientos(&cliente, s.asientos);
+    int i,j;
+    int col[20];
+    for (i=0; i<3; i++){
+        for (j=0; j<20; j++){
+            col[j]=s.asientos[i][j];
+        }
+        enviarArrayAsientos(&cliente, col);
+    }
 }
 
 void mostrarAsientos(int cliente)
@@ -333,9 +340,9 @@ void mostrarAsientos(int cliente)
     enviarAsientos(cliente, idServicio);
 }
 
-void enviarArrayAsientos(int *cliente, int num)
+void enviarArrayAsientos(int *cliente, int *num)
 {
-    int n = write(*cliente, &num, 60);
+    int n = write(*cliente, num, 80);
     if (n < 0)
     {
         error("error al escribir mensaje");

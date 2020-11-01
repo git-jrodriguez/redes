@@ -72,7 +72,13 @@ I:  //empty
 P:
     printf("\n\n----------------------------------");
     printf("\nfin de conexion con un cliente\n");
-    goto S;
+    printf("seguir escuchando (1) si, (0)no");
+    int opcion;
+    scanf("%d",&opcion);
+    if (opcion == 1){
+        goto S;    
+    }
+    
 
     close(cliente);
     close(servidor);

@@ -101,4 +101,6 @@ void enviarLogCliente(int cliente);
 void enviarAsientos(int cliente, int id);
 
 void mostrarAsientos(int cliente);
+
+void enviarArrayAsientos(int *cliente, int *num);
 #endif
