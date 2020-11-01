@@ -12,6 +12,11 @@ int main(int argc, char *argv[])
     if (argc < 2)
         error("Error, falta especificar puerto");
     int puerto = atoi(argv[1]);
+    char spuerto[6];
+    sprintf(spuerto, "%d", puerto);
+
+    char msg[200]="";
+
     iniciarServerSocket(&servidor, puerto);
     int cant = cantidadUsuarios();
     struct usuario usuarios[cant];
@@ -20,6 +25,11 @@ int main(int argc, char *argv[])
 S:
     //esperar cliente
     printf("servidor a la escucha en PUERTO %d\n", puerto);
+    serverLog("==============================================");
+    strcpy(msg, "servidor a la escucha en puerto ");
+    strcat(msg, spuerto);
+    serverLog(msg);
+    serverLog("==============================================");
     listen((servidor), 5);
     //Aceptar cliente
     aceptarCliente(&cliente, &servidor);
@@ -29,6 +39,7 @@ S:
     int logueado = 0;
     char nombre[1024];
 
+    serverLog("Cliente intentando loguearse");
     while (logueado == 0 && intentos > 0)
     {
         printf("intento de login numero: %d\n", (3 + 1 - intentos));
@@ -40,9 +51,13 @@ S:
     if (logueado == 0)
     {
         printf("intentos de login superados, cliente rechazado\n\n");
+        serverLog("\nintentos de login superados, cliente rechazado\n");
         goto P;
     }
     printf("\nUsuario Conectado: %s\n\n", nombre);
+    strcpy(msg, "Usuario conectado: " );
+    strcat(msg, nombre);
+    serverLog(msg);
     //else
 
 I: //empty
