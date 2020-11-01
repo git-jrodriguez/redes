@@ -128,10 +128,10 @@ int verificarUsuario(const char *user, const char *pass, struct usuario *usuario
 login
 devuelve 1 si se logueo
 ---------------------------------*/
-int login(int cliente, struct usuario *usuarios, int cant)
+int login(int cliente, struct usuario *usuarios, int cant, char nombre[1024])
 {
     enviarTexto(&cliente, "USUARIO: ");
-    char nombre[1024];
+    //char nombre[1024];
     recibirTexto(&cliente, nombre); //nombre
 
     enviarTexto(&cliente, "CONTRASEÑA: ");
@@ -170,9 +170,11 @@ void cargarUsuarios(struct usuario *usuarios)
     }
 }
 
-int altaServicio(int cliente)
+int altaServicio(int cliente, char *usuario)
 {
+
     int partida = 0, dia = 0, mes = 0, anio = 0, turno = 0;
+    printf("Creando Servicio\n");
 
     //origen
     partida = recibirNumero(&cliente);
@@ -188,10 +190,13 @@ int altaServicio(int cliente)
     if (creado)
     {
         enviarTexto(&cliente, "Servicio creado existosamente");
+        registrarServicioCreado(usuario);
+        printf("Servicio creado existosamente\n");
     }
     else
     {
         enviarTexto(&cliente, "Error, servicio ya existe");
+        printf("Error, servicio ya existe\n");
     }
 }
 
@@ -265,7 +270,8 @@ void enviarArrayServicio(int *cliente, int *num)
     //serv_1 -> origen
     //serv_2 -> Fecha
     //serv_3 -> turno
-    //serv_4 -> asientos disponibles
+    printf("Enviando Array de Servicio\n");
+
     int n = write(*cliente, num, 16);
     if (n < 0)
     {
@@ -276,6 +282,8 @@ void enviarArrayServicio(int *cliente, int *num)
 void mostrarListadoServicios(int cliente)
 {
     //recibo los parametros
+    printf("Buscando servicios Filtrados\n");
+
     int partida = recibirNumero(&cliente);
     int dia = recibirNumero(&cliente);
     int mes = recibirNumero(&cliente);
@@ -289,7 +297,7 @@ void mostrarListadoServicios(int cliente)
     //envio los servicios a mostrar
     for (int i = 0; i < total; i++)
     {
-        int servicio[3];
+        int servicio[4];
         servicio[0] = arrayServicios[i].id;
         servicio[1] = arrayServicios[i].partida;
         servicio[2] = arrayServicios[i].fecha;
@@ -309,7 +317,7 @@ void mostrarListadoServicios(int cliente)
         mostrarAsientos(cliente);
         break;
     case 2:
-        altaServicio(cliente);
+        altaServicio(cliente, "Juan");
         break;
     default:
         break;
@@ -319,14 +327,17 @@ void mostrarListadoServicios(int cliente)
 void enviarAsientos(int cliente, int id)
 {
     //recibo los parametros
+    printf("Enviando arrays de asientos\n");
     Servicio s;
     traerServicio(id, &s);
     printf("Asientos: %d", s.asientos[0][0]);
-    int i,j;
+    int i, j;
     int col[20];
-    for (i=0; i<3; i++){
-        for (j=0; j<20; j++){
-            col[j]=s.asientos[i][j];
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 20; j++)
+        {
+            col[j] = s.asientos[i][j];
         }
         enviarArrayAsientos(&cliente, col);
     }
@@ -334,17 +345,119 @@ void enviarAsientos(int cliente, int id)
 
 void mostrarAsientos(int cliente)
 {
-    printf("TEST");
+    printf("Recibiendo ID de servicio para filtro\n");
     int idServicio = recibirNumero(&cliente);
     printf("Servicio a buscar: %d", idServicio);
     enviarAsientos(cliente, idServicio);
+
+    // escuchamos numero num
+    // if num == 1 o ==2
+    // modificar reserva
+    // if ==3 gestionarReserva
+    // if ==4 mostrarListadoServicios y llorar
 }
 
 void enviarArrayAsientos(int *cliente, int *num)
+
 {
     int n = write(*cliente, num, 80);
     if (n < 0)
     {
         error("error al escribir mensaje");
     }
+}
+
+int modificarReserva(int cliente, int id, int fila, int numero, int modificacion)
+{
+    int guardado = hacerReserva(id, fila, numero, modificacion);
+    return guardado;
+}
+
+void serverLog(char *msg)
+{
+    char path[20] = "../txt/server.log";
+    char texto[1024] = "";
+    char fecha[20];
+    obtenerFecha(fecha);
+    char hora[20];
+    obtenerHora(hora);
+    strcat(texto, fecha);
+    strcat(texto, " - ");
+    strcat(texto, hora);
+    strcat(texto, " : ");
+    strcat(texto, msg);
+    strcat(texto, "\n");
+    nota(path, texto);
+}
+
+void registrarLoginUsuario(char *nombre)
+{
+    char path[20] = "../txt/usuario";
+    strcat(path, nombre);
+    strcat(path, ".log");
+    char msg[1024] = "";
+    strcat(msg, "Usuario Logueado \n");
+    char guiones[1024] = "";
+    strcat(guiones, "==============================\n");
+    registrarActividadUsuario(path, guiones);
+    registrarActividadUsuario(path, msg);
+    registrarActividadUsuario(path, guiones);
+}
+
+void registrarServicioCreado(char *nombre)
+{
+    char path[20] = "../txt/usuario";
+    strcat(path, nombre);
+    strcat(path, ".log");
+    char msg[1024] = "";
+    strcat(msg, "Usuario Logueado \n");
+    char guiones[1024] = "";
+    strcat(guiones, "==============================\n");
+    registrarActividadUsuario(path, guiones);
+    registrarActividadUsuario(path, msg);
+    registrarActividadUsuario(path, guiones);
+}
+
+void registrarLogoutUsuario(char *nombre)
+{
+    char path[20] = "../txt/usuario";
+    strcat(path, nombre);
+    strcat(path, ".log");
+    char msg[1024] = "";
+    strcat(msg, "Usuario Deslogueado \n");
+    char guiones[1024] = "";
+    strcat(guiones, "\n\n");
+    registrarActividadUsuario(path, msg);
+    registrarActividadUsuario(path, guiones);
+}
+
+void registrarActividadUsuario(char *path, char *msg)
+{
+    char fecha[20] = "";
+    char hora[20] = "";
+    obtenerFecha(fecha);
+    obtenerHora(hora);
+    strcat(fecha, "_");
+    strcat(fecha, hora);
+    strcat(fecha, ": ");
+    strcat(fecha, msg);
+    nota(path, fecha);
+}
+
+void obtenerFecha(char *fecha)
+{
+    time_t t;
+    struct tm *tm;
+    t = time(NULL);
+    tm = localtime(&t);
+    strftime(fecha, 100, "%d/%m/%Y", tm);
+}
+
+void obtenerHora(char *hora)
+{
+    time_t t;
+    struct tm *tm;
+    t = time(NULL);
+    tm = localtime(&t);
+    strftime(hora, 100, "%H:%M:%S", tm);
 }

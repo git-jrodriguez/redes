@@ -3,14 +3,14 @@
 #include <string.h>
 #include "servicios.h"
 
-int guardarServicio( int fecha, int turno, int partida)
+int guardarServicio(int fecha, int turno, int partida)
 {
     /*
     si buscarServicio devuelve 1 -> cucha // pendiente
     si buscarServicio devuelve 0 -> s = {} -> guardar en servicios.bin
     */
 
-    FILE * fp;
+    FILE *fp;
     int existe = existeServicio(fecha, turno, partida);
     if (existe == FALSO)
     {
@@ -26,7 +26,6 @@ int guardarServicio( int fecha, int turno, int partida)
     }
 }
 
-
 int existeServicio(int fecha, int turno, int partida)
 {
     int existe = FALSO;
@@ -36,11 +35,11 @@ int existeServicio(int fecha, int turno, int partida)
     if (fp) //si el archivo ya existe
     {
 
-        while (fread(&s, sizeof(Servicio), 1, fp) == 1 && existe==FALSO)
+        while (fread(&s, sizeof(Servicio), 1, fp) == 1 && existe == FALSO)
         {
-            if(s.fecha==fecha && s.partida==partida && s.turno==turno)
+            if (s.fecha == fecha && s.partida == partida && s.turno == turno)
             {
-                existe=VERDADERO;
+                existe = VERDADERO;
             }
         }
         fclose(fp);
@@ -48,13 +47,12 @@ int existeServicio(int fecha, int turno, int partida)
     return existe;
 }
 
-
 Servicio completarServicio(int fecha, int turno, int partida)
 {
     int asientosVacios[COLUMNAS][FILAS];
-    FILE* fp;
+    FILE *fp;
     int id = traerUltimoID(fp);
-    Servicio servicio = {id+1,fecha,turno,partida,asientosVacios};
+    Servicio servicio = {id + 1, fecha, turno, partida, asientosVacios};
     for (int i = 0; i < COLUMNAS; i++)
     {
         for (int j = 0; j < FILAS; j++)
@@ -65,7 +63,6 @@ Servicio completarServicio(int fecha, int turno, int partida)
 
     return servicio;
 }
-
 
 int traerUltimoID()
 {
@@ -79,13 +76,12 @@ int traerUltimoID()
         {
             while (fread(&s, sizeof(Servicio), 1, fp) == 1)
             {
-                id=s.id;
+                id = s.id;
             }
         }
     }
     return id;
 }
-
 
 void traerServicio(int id, Servicio *servicio)
 {
@@ -94,7 +90,7 @@ void traerServicio(int id, Servicio *servicio)
     recorre todos los structs
     devuelve el servicio
     */
-    FILE * fp;
+    FILE *fp;
     Servicio s;
     fp = fopen("servicios.bin", "r+b");
     if (!fp)
@@ -102,15 +98,14 @@ void traerServicio(int id, Servicio *servicio)
 
     while (fread(&s, sizeof(Servicio), 1, fp) == 1)
     {
-        if (s.id==id)
+        if (s.id == id)
         {
-            *servicio=s;
+            *servicio = s;
         }
     }
     fclose(fp);
     return (0);
 }
-
 
 Servicio *buscarServicios(int fecha, int turno, int partida, int *total)
 {
@@ -134,7 +129,7 @@ Servicio *buscarServicios(int fecha, int turno, int partida, int *total)
     else partida + turno + fecha
         */
 
-    FILE * fp;
+    FILE *fp;
     int totalDeServicios = traerUltimoID();
     int totalDeGuardados = 0;
 
@@ -142,112 +137,109 @@ Servicio *buscarServicios(int fecha, int turno, int partida, int *total)
     Servicio lista[totalDeServicios]; //-1
     fp = fopen(archivoServicios, "r+b");
 
-
     while (fread(&s, sizeof(Servicio), 1, fp) == 1)
     {
 
-        if (fecha==0)
+        if (fecha == 0)
         {
-            if (turno==0)
+            if (turno == 0)
             {
-                if (partida==s.partida)
+                if (partida == s.partida)
                 {
-                    lista[totalDeGuardados]=s;
+                    lista[totalDeGuardados] = s;
                     totalDeGuardados++;
                 }
             }
             else
             {
-                if (turno == s.turno && partida==s.partida)
+                if (turno == s.turno && partida == s.partida)
                 {
-                    lista[totalDeGuardados]=s;
+                    lista[totalDeGuardados] = s;
                     totalDeGuardados++;
                 }
             }
         }
-        else if (turno==0)
+        else if (turno == 0)
         {
-            if (partida==0)
+            if (partida == 0)
             {
-                if (fecha==s.fecha)
+                if (fecha == s.fecha)
                 {
-                    lista[totalDeGuardados]=s;
+                    lista[totalDeGuardados] = s;
                     totalDeGuardados++;
                 }
             }
             else
             {
-                if (fecha==s.fecha&& partida==s.partida)
+                if (fecha == s.fecha && partida == s.partida)
                 {
-                    lista[totalDeGuardados]=s;
+                    lista[totalDeGuardados] = s;
                     totalDeGuardados++;
                 }
             }
         }
-        else if (partida==0)
+        else if (partida == 0)
         {
-            if (fecha==0)
+            if (fecha == 0)
             {
-                if (turno == s.turno )
+                if (turno == s.turno)
                 {
-                    lista[totalDeGuardados]=s;
+                    lista[totalDeGuardados] = s;
                     totalDeGuardados++;
                 }
             }
             else
             {
-                if (fecha==s.fecha&& turno == s.turno)
+                if (fecha == s.fecha && turno == s.turno)
                 {
-                    lista[totalDeGuardados]=s;
+                    lista[totalDeGuardados] = s;
                     totalDeGuardados++;
                 }
             }
         }
         else
         {
-            if (fecha==s.fecha&& turno == s.turno && partida==s.partida)
+            if (fecha == s.fecha && turno == s.turno && partida == s.partida)
             {
-                lista[totalDeGuardados]=s;
+                lista[totalDeGuardados] = s;
                 totalDeGuardados++;
             }
         }
-
     }
     fclose(fp);
 
-    Servicio* arrayServicios = (Servicio*)calloc(totalDeGuardados+1, sizeof(Servicio));
-    for (int i=0; i<totalDeGuardados; i++)
+    Servicio *arrayServicios = (Servicio *)calloc(totalDeGuardados + 1, sizeof(Servicio));
+    for (int i = 0; i < totalDeGuardados; i++)
     {
         arrayServicios[i] = lista[i];
     }
-    *total=totalDeGuardados;
+    *total = totalDeGuardados;
     return arrayServicios;
 }
 
-
 Servicio *traerTodosServicios(int *total)
 {
-    FILE * fp;
+    FILE *fp;
     Servicio arrayServicios[100];
     Servicio s;
     fp = fopen(archivoServicios, "r+b");
     int i = 0;
     while (fread(&s, sizeof(Servicio), 1, fp) == 1)
     {
-        arrayServicios[i]=s;
+        arrayServicios[i] = s;
         i++;
     }
     fclose(fp);
 
-    Servicio* lista = (Servicio*)calloc(i+1, sizeof(Servicio));
+    Servicio *lista = (Servicio *)calloc(i + 1, sizeof(Servicio));
     lista = arrayServicios;
-    *total=i;
+    *total = i;
     return lista;
 }
 
-
 int hacerReserva(int id, int fila, int numero, int reserva)
 {
+    //DEVUELVE 0 SI SE PUDO HACER EL CAMBIO
     /*
     ya sabemos que el servicio existe
     abrimos el archivo
@@ -255,25 +247,31 @@ int hacerReserva(int id, int fila, int numero, int reserva)
     modificamos el asiento
     */
 
-    FILE * fp;
+    FILE *fp;
     Servicio s;
     fp = fopen(archivoServicios, "r+b");
 
     while (fread(&s, sizeof(Servicio), 1, fp) == 1)
     {
-        if (s.id==id)
+        if (s.id == id)
         {
             //reserva tiene 1 si quiere reservar, 0 si quiere liberar
-            s.asientos[fila-1][numero-1] = reserva;
-
-            fseek(fp, ftell(fp) - sizeof(Servicio), SEEK_SET);
-            fwrite(&s, sizeof(Servicio), 1, fp);
-            fclose(fp);
-            return 1;
+            if (s.asientos[fila - 1][numero - 1] == reserva)
+            {
+                fclose(fp);
+                return 1;
+            }
+            else
+            {
+                s.asientos[fila - 1][numero - 1] = reserva;
+                fseek(fp, ftell(fp) - sizeof(Servicio), SEEK_SET);
+                fwrite(&s, sizeof(Servicio), 1, fp);
+                fclose(fp);
+                return 0;
+            }
         }
     }
 }
-
 
 void mostrarTodosLosServicios()
 {
@@ -298,5 +296,3 @@ void mostrarTodosLosServicios()
         printf("\n\n");
     }
 }
-
-

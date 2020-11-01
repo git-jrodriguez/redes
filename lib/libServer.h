@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <ctype.h>
+#include <time.h>
 #include "servicios.h"
 
 /* --------------------------------------------------------------------
@@ -74,7 +75,7 @@ int verificarUsuario(const char *user, const char *pass, struct usuario *usuario
 login
 devuelve 1 si se logueo
 ---------------------------------*/
-int login (int cliente, struct usuario *usuarios, int cant);
+int login (int cliente, struct usuario *usuarios, int cant, char *nombre);
 
 /*--------------------------------
 Cantidad de usuarios
@@ -86,7 +87,7 @@ int cantidadUsuarios();
 altaServicio
 maneja los servicios
 ---------------------------------*/
-int altaServicio(int cliente);
+int altaServicio(int cliente, char *usuario);
 
 /*................................
 Llamar a operaciones del servidor
@@ -103,4 +104,12 @@ void enviarAsientos(int cliente, int id);
 void mostrarAsientos(int cliente);
 
 void enviarArrayAsientos(int *cliente, int *num);
+
+
+void registrarLoginUsuario(char *nombre);
+
+void registrarLogoutUsuario(char *nombre);
+
+void registrarActividadUsuario(char *path, char *msg);
+
 #endif

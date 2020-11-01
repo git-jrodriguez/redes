@@ -66,7 +66,7 @@ void mostrarServicio(int cliente, int idServicio);
 void gestionarAsiento(int cliente, int idServicio, int fila, int columna,int operacion);
 void mostrarRegistroDeactividades(int cliente, char* usuario);
 void menu(int cliente, char nombre[1024]);
-void solicitarLogCliente (int cliente, const char * nombre);
+void solicitarLogCliente (int cliente, char *nombre);
 void recibirEImprimirServicio(int *socket);
 void recibirTexto(int *cliente, char *texto);
 void recibirAsientos(int *socket, int *array);

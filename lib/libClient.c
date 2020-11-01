@@ -379,12 +379,20 @@ void mostrarListadoServicios(int cliente, int partida, int dia, int mes, int ani
         //Listado de servicios
         //recibo el total de registros
         int totalServicios = recibirNumero(&cliente);
-        for (int i = 0; i < totalServicios; i++)
+        if (totalServicios == 0)
         {
-            recibirEImprimirServicio(&cliente);
+            printf("\nNingún archivo cumple con ese criterio \n");
+            printf("\nElige una opción:\n");
         }
-        printf("\nElige una opción:\n");
-        printf("[1]Elegir servicio\n");
+        else
+        {
+            for (int i = 0; i < totalServicios; i++)
+            {
+                recibirEImprimirServicio(&cliente);
+            }
+            printf("\nElige una opción:\n");
+            printf("[1]Elegir servicio\n");
+        }
         printf("[2]Alta nuevo servicio\n");
         printf("[0]Volver al menu anterior\n");
         scanf("%d", &opcion);
@@ -434,7 +442,7 @@ void mostrarServicio(int cliente, int idServicio)
         printf("[2]Liberar un asiento\n");
         printf("[3]Elegir otro servicio\n"); //siento que es lo mismo que el menu anterior
         printf("[0]Volver al menu anterior\n");
-        scanf("%d", &opcion);
+        scanf(" %d", &opcion);
         switch (opcion)
         {
         case 1:
@@ -461,19 +469,24 @@ void mostrarServicio(int cliente, int idServicio)
 void gestionarAsiento(int cliente, int idServicio, int fila, int columna, int operacion)
 {
     system("clear");
-    if (operacion == 0)
+    //ESCUCHA SERVER
+    int guardado = recibirNumero(&cliente);
+    if (guardado == 0)
     {
-        printf("Sevicio Nº %d, Asiento %d|%d liberado\n", idServicio, fila, columna);
-        /*------------------------------
+        if (operacion == 0)
+        {
+            printf("Sevicio Nº %d, Asiento %d|%d liberado\n", idServicio, fila, columna);
+            /*------------------------------
                 CASO DE USO 4
         ------------------------------*/
-    }
-    else
-    {
-        printf("Sevicio Nº %d, Asiento %d|%d Reservado\n", idServicio, fila, columna);
-        /*------------------------------
+        }
+        else
+        {
+            printf("Sevicio Nº %d, Asiento %d|%d Reservado\n", idServicio, fila, columna);
+            /*------------------------------
                 CASO DE USO 4
         ------------------------------*/
+        }
     }
 
     //MostrarServicio()
@@ -486,6 +499,8 @@ void mostrarRegistroDeactividades(int cliente, char *usuario)
     do
     {
         printf("\nRegistro de actividades de %s\n", usuario);
+        llamarOperacion(cliente, 4);
+        solicitarLogCliente(cliente, usuario);
         printf("------------------------\n");
         printf("[0]Volver al menu principal\n");
         scanf("%d", &opcion);
@@ -529,7 +544,7 @@ void menu(int cliente, char nombre[1024])
             break;
         case 3:
             system("clear");
-            mostrarRegistroDeactividades(&cliente, nombre);
+            mostrarRegistroDeactividades(cliente, nombre);
             system("clear");
             break;
         default:
@@ -540,12 +555,10 @@ void menu(int cliente, char nombre[1024])
     } while (opcion != 0);
 }
 
-void solicitarLogCliente(int cliente, const char *nombre)
+void solicitarLogCliente(int cliente, char *nombre)
 {
     //enviar solicitud
-    char nomb[1024] = "";
-    strcat(nomb, nombre);
-    enviarTexto(&cliente, nomb);
+    enviarTexto(&cliente, nombre);
     //recibir del servidor cantidad de renglones
     int renglones = recibirNumero(&cliente);
     //abrir archivo donde guardar las respuestas

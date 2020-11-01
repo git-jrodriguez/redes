@@ -1,4 +1,5 @@
 #include "../lib/libServer.h"
+#include <time.h>
 
 /* --------------------------------------------------------------------
                                 MAIN
@@ -26,12 +27,14 @@ S:
     //intentos de login
     int intentos = 3;
     int logueado = 0;
+    char nombre[1024];
 
     while (logueado == 0 && intentos > 0)
     {
         printf("intento de login numero: %d\n", (3 + 1 - intentos));
-        logueado = login(cliente, usuarios, cant);
+        logueado = login(cliente, usuarios, cant, nombre);
         intentos--;
+        registrarLoginUsuario(nombre);
         enviarNumero(&cliente, logueado); //le avisa al cliente si encontro el usuario o no
     }
     if (logueado == 0)
@@ -39,11 +42,10 @@ S:
         printf("intentos de login superados, cliente rechazado\n\n");
         goto P;
     }
-
-    printf("Quereme");
+    printf("\nUsuario Conectado: %s\n\n", nombre);
     //else
 
-I:  //empty
+I: //empty
     //comienzo de la aplicación
 
     printf("Esperando operacion - ");
@@ -52,16 +54,20 @@ I:  //empty
     switch (idOperacion)
     {
     case 0:
+        registrarLogoutUsuario(nombre);
         enviarTexto(&cliente, "Sesion Finalizada");
         goto P;
         break;
     case 1:
-        altaServicio(cliente);
+        altaServicio(cliente, nombre);
         break;
     case 2:
         mostrarListadoServicios(cliente);
         break;
     case 3:
+        enviarLogCliente(cliente);
+        break;
+    case 4:
         mostrarAsientos(cliente);
         break;
     default:
@@ -74,11 +80,11 @@ P:
     printf("\nfin de conexion con un cliente\n");
     printf("seguir escuchando (1) si, (0)no");
     int opcion;
-    scanf("%d",&opcion);
-    if (opcion == 1){
-        goto S;    
+    scanf("%d", &opcion);
+    if (opcion == 1)
+    {
+        goto S;
     }
-    
 
     close(cliente);
     close(servidor);
