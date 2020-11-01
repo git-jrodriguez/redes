@@ -65,10 +65,10 @@ I: //empty
         mostrarListadoServicios(cliente);
         break;
     case 3:
-        enviarLogCliente(cliente);
+        mostrarAsientos(cliente);
         break;
     case 4:
-        mostrarAsientos(cliente);
+        enviarLogCliente(cliente);
         break;
     default:
         break;
