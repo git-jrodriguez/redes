@@ -112,4 +112,10 @@ void registrarLogoutUsuario(char *nombre);
 
 void registrarActividadUsuario(char *path, char *msg);
 
+void serverLog(char *msg);
+
+void obtenerFecha(char *fecha);
+
+void obtenerHora(char *hora);
+
 #endif

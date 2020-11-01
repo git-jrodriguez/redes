@@ -376,7 +376,7 @@ int modificarReserva(int cliente, int id, int fila, int numero, int modificacion
 void serverLog(char *msg)
 {
     char path[20] = "../txt/server.log";
-    char texto[1024] = "";
+    char texto[1024] = "\n";
     char fecha[20];
     obtenerFecha(fecha);
     char hora[20];
